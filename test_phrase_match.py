@@ -105,7 +105,7 @@ def test_phrase_match_exact():
         [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_lowercase():
+def test_phrase_match_ignores_lowercase():
     solr = pysolr.Solr(SOLR_URL)
     solr.add([{
         'id': '1',
@@ -121,7 +121,7 @@ def test_phrase_match_lowercase():
         [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_uppercase():
+def test_phrase_match_ignores_uppercase():
     solr = pysolr.Solr(SOLR_URL)
     solr.add([{
         'id': '1',
@@ -150,4 +150,37 @@ def test_phrase_match_ignores_punctuation():
 
     assert 1 == result.hits
     assert u'Colorless, Green; Ideas. Sleep? Furiously!' == \
+        [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_trims_whitespace():
+    solr = pysolr.Solr(SOLR_URL)
+    solr.add([{
+        'id': '1',
+        'phrase_match': '  Colorless Green Ideas Sleep Furiously         ',
+    }])
+
+    result = solr.search(
+        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+    )
+
+    assert 1 == result.hits
+    assert u'  Colorless Green Ideas Sleep Furiously         ' == \
+        [x.get('phrase_match') for x in result][0]
+
+
+@pytest.mark.xfail
+def test_phrase_match_ignores_special_characters():
+    solr = pysolr.Solr(SOLR_URL)
+    solr.add([{
+        'id': '1',
+        'phrase_match': 'Cölorless Grêen Idéaß Slèep Furiously #()[]$%',
+    }])
+
+    result = solr.search(
+        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+    )
+
+    assert 1 == result.hits
+    assert u'Cölorless Grêen Idéaß Slèep Furiously #()[]$%' == \
         [x.get('phrase_match') for x in result][0]
