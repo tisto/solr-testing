@@ -1,10 +1,10 @@
+# -*- coding: utf-8 -*-
 import subprocess
 import pysolr
 import pytest
 import time
 import urllib2
 import os
-import shutil
 import signal
 import sys
 
