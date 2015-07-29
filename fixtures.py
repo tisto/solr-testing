@@ -35,8 +35,8 @@ def setup_solr_core(solr_core):
         core_properties.write('name={}'.format(solr_core))
 
 
-def prepare_solrconfig():
-    with open('templates/solrconfig.xml', 'r') as template:
+def prepare_solrconfig(solrconfig_xml='solrconfig.xml'):
+    with open('templates/{}'.format(solrconfig_xml), 'r') as template:
         with open(
             'test-solr/solr/collection1/conf/solrconfig.xml',
             'w'
@@ -44,8 +44,8 @@ def prepare_solrconfig():
             solrconfig.write(template.read())
 
 
-def prepare_schema():
-    with open('templates/phrase_match-schema.xml', 'r') as template:
+def prepare_schema(schema_xml='schema.xml'):
+    with open('templates/{}'.format(schema_xml), 'r') as template:
         with open(
             'test-solr/solr/collection1/conf/schema.xml',
             'w'
@@ -57,7 +57,7 @@ def prepare_schema():
 def solr(request):
     setup_solr_core('phrase_match')
     prepare_solrconfig()
-    prepare_schema()
+    prepare_schema('phrase_match-schema.xml')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
         stdout=subprocess.PIPE,
