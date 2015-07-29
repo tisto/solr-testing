@@ -31,6 +31,9 @@ virtualenv:
 		echo "Skip creating virtualenv."; \
 	fi
 
+clean:
+	@echo "Clean"
+	rm -rf test-solr
 test:
 	@echo "Run Tests"
 	py.test
