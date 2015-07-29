@@ -16,8 +16,28 @@ SOLR_PORT = '8989'
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 
 
+def prepare_solrconfig():
+    with open('templates/solrconfig.xml', 'r') as template:
+        with open(
+            'test-solr/solr/collection1/conf/solrconfig.xml',
+            'w'
+        ) as solrconfig:
+            solrconfig.write(template.read())
+
+
+def prepare_schema():
+    with open('templates/phrase_match-schema.xml', 'r') as template:
+        with open(
+            'test-solr/solr/collection1/conf/schema.xml',
+            'w'
+        ) as schema:
+            schema.write(template.read())
+
+
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
+    prepare_solrconfig()
+    prepare_schema()
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
         stdout=subprocess.PIPE,
@@ -27,6 +47,7 @@ def solr(request):
     )
 
     def fin():
+        print('Finalizing Solr')
         os.killpg(solr_process.pid, signal.SIGTERM)
 
     # Poll Solr until it is up and running
@@ -41,30 +62,10 @@ def solr(request):
             sys.stdout.write('.')
         if i == 9:
             fin()
-            sys.stdout.write('Solr Instance could not be started !!!')
+            print('Solr Instance could not be started !!!')
 
     request.addfinalizer(fin)
     return solr_process
-
-
-@pytest.fixture(scope="function", autouse=True)
-def prepare_solrconfig(request):
-    with open('templates/solrconfig.xml', 'r') as template:
-        with open(
-            'test-solr/solr/collection1/conf/solrconfig.xml',
-            'w'
-        ) as solrconfig:
-            solrconfig.write(template.read())
-
-
-@pytest.fixture(scope="function", autouse=True)
-def prepare_schema(request):
-    with open('templates/schema.xml', 'r') as template:
-        with open(
-            'test-solr/solr/collection1/conf/schema.xml',
-            'w'
-        ) as schema:
-            schema.write(template.read())
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -85,4 +86,19 @@ def test_title():
     )
     assert 1 == result.hits
     assert u'Colorless Green Ideas Sleep Furiously' == \
-        [x.get('title') for x in result][0][0]
+        [x.get('title') for x in result][0]
+
+
+def test_phrase_match_exact():
+    solr = pysolr.Solr(SOLR_URL)
+    solr.add([{
+        'id': '1',
+        'phrase_match': 'Colorless Green Ideas Sleep Furiously',
+    }])
+
+    result = solr.search(
+        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+    )
+    assert 1 == result.hits
+    assert u'Colorless Green Ideas Sleep Furiously' == \
+        [x.get('phrase_match') for x in result][0]

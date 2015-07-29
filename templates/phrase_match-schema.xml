@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="example" version="1.5">
+
+  <uniqueKey>id</uniqueKey>
+  <defaultSearchField>id</defaultSearchField>
+
+  <types>
+    <fieldType name="string" class="solr.StrField" />
+
+    <fieldType name="phrase_match" class="solr.TextField">
+      <analyzer>
+
+        <!-- Treat the entire field as a single token. -->
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+
+        <!-- Lowercases the letters in each token. -->
+        <filter class="solr.LowerCaseFilterFactory" />
+
+        <!-- Trims whitespace at either end of a token. -->
+        <filter class="solr.TrimFilterFactory" />
+
+        <!-- Remove all characters except lower case and whitespace.
+             Java RegExp Patterns: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
+        -->
+        <filter class="solr.PatternReplaceFilterFactory"
+                pattern="([^a-z\p{Space}])"
+                replacement="" replace="all" />
+
+      </analyzer>
+    </fieldType>
+  </types>
+
+  <fields>
+    <field name="id" type="string" indexed="true" stored="true" required="true" />
+    <field name="phrase_match" type="phrase_match" indexed="true" stored="true" />
+    <dynamicField name="*"  type="string"  indexed="true"  stored="true" />
+  </fields>
+
+
+</schema>
