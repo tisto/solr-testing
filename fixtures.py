@@ -33,6 +33,8 @@ def setup_solr_core(solr_core):
     with open('{}/core.properties'.format(target_dir), 'r+') as core_properties:  # noqa
         core_properties.seek(0)
         core_properties.write('name={}'.format(solr_core))
+    prepare_solrconfig()
+    prepare_schema('phrase_match-schema.xml')
 
 
 def prepare_solrconfig(solrconfig_xml='solrconfig.xml'):
@@ -56,8 +58,6 @@ def prepare_schema(schema_xml='schema.xml'):
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
     setup_solr_core('phrase_match')
-    prepare_solrconfig()
-    prepare_schema('phrase_match-schema.xml')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
         stdout=subprocess.PIPE,
