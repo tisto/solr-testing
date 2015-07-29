@@ -1,4 +1,5 @@
 import subprocess
+import pysolr
 import pytest
 import time
 import urllib2
@@ -11,12 +12,13 @@ TEST_DIR = 'test'
 SOLR_URL = 'http://localhost:8989/solr'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
+SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 
 
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
     solr_process = subprocess.Popen(
-        'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT),
+        SOLR_START_CMD,
         stdout=subprocess.PIPE,
         shell=True,
         preexec_fn=os.setsid,
@@ -48,9 +50,18 @@ def solr(request):
     return solr_process
 
 
-def func(x):
-    return x + 1
+def test_title():
+    solr = pysolr.Solr(SOLR_URL)
+    solr.delete(q='*:*')
 
+    solr.add([{
+        'id': '1',
+        'title': 'Colorless Green Ideas Sleep Furiously',
+    }])
 
-def test_answer():
-    assert func(4) == 5
+    result = solr.search(
+        'title:"Colorless Green Ideas Sleep Furiously"'
+    )
+    assert 1 == result.hits
+    assert u'Colorless Green Ideas Sleep Furiously' == \
+        [x.get('title') for x in result][0][0]
