@@ -26,7 +26,6 @@ virtualenv:
 		echo "Skip creating virtualenv."; \
 	fi
 
-
 test:
 	@echo "Run Tests"
 	py.test
