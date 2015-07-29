@@ -81,4 +81,4 @@ def test_title():
     )
     assert 1 == result.hits
     assert u'Colorless Green Ideas Sleep Furiously' == \
-        [x.get('title') for x in result][0]
+        [x.get('title') for x in result][0][0]
