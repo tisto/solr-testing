@@ -11,8 +11,9 @@ import shutil
 import signal
 import sys
 
+
 TEST_DIR = 'test-solr'
-SOLR_URL = 'http://localhost:8989/solr'
+SOLR_URL = 'http://localhost:8989/solr/phrase_match'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
@@ -43,26 +44,26 @@ def setup_solr_core(solr_core):
     # Load solrconfig.xml if file exists
     solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(solrconfig_xml)):
-        prepare_solrconfig(solrconfig_xml)
+        prepare_solrconfig(solrconfig_xml, solr_core)
     # Load schema.xml if file exists
     schema_xml = '{}-schema.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(schema_xml)):
-        prepare_schema(schema_xml)
+        prepare_schema(schema_xml, solr_core)
 
 
-def prepare_solrconfig(solrconfig_xml):
+def prepare_solrconfig(solrconfig_xml, solr_core):
     with open('templates/{}'.format(solrconfig_xml), 'r') as template:
         with open(
-            'test-solr/solr/collection1/conf/solrconfig.xml',
+            'test-solr/solr/{}/conf/solrconfig.xml'.format(solr_core),
             'w'
         ) as solrconfig:
             solrconfig.write(template.read())
 
 
-def prepare_schema(schema_xml):
+def prepare_schema(schema_xml, solr_core):
     with open('templates/{}'.format(schema_xml), 'r') as template:
         with open(
-            'test-solr/solr/collection1/conf/schema.xml',
+            'test-solr/solr/{}/conf/schema.xml'.format(solr_core),
             'w'
         ) as schema:
             schema.write(template.read())
