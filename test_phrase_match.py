@@ -3,6 +3,8 @@ from fixtures import *
 
 import pysolr
 
+SOLR_URL = 'http://localhost:8989/solr/phrase_match'
+
 
 def test_phrase_match_exact():
     solr = pysolr.Solr(SOLR_URL)
