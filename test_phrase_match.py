@@ -67,10 +67,14 @@ def prepare_schema(request):
             schema.write(template.read())
 
 
-def test_title():
+@pytest.fixture(scope="function", autouse=True)
+def clear_solr(request):
     solr = pysolr.Solr(SOLR_URL)
     solr.delete(q='*:*')
 
+
+def test_title():
+    solr = pysolr.Solr(SOLR_URL)
     solr.add([{
         'id': '1',
         'title': 'Colorless Green Ideas Sleep Furiously',
