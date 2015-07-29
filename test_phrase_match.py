@@ -4,6 +4,7 @@ import pytest
 import time
 import urllib2
 import os
+import shutil
 import signal
 import sys
 
@@ -44,6 +45,26 @@ def solr(request):
 
     request.addfinalizer(fin)
     return solr_process
+
+
+@pytest.fixture(scope="function", autouse=True)
+def prepare_solrconfig(request):
+    with open('templates/solrconfig.xml', 'r') as template:
+        with open(
+            'test-solr/solr/collection1/conf/solrconfig.xml',
+            'w'
+        ) as solrconfig:
+            solrconfig.write(template.read())
+
+
+@pytest.fixture(scope="function", autouse=True)
+def prepare_schema(request):
+    with open('templates/schema.xml', 'r') as template:
+        with open(
+            'test-solr/solr/collection1/conf/schema.xml',
+            'w'
+        ) as schema:
+            schema.write(template.read())
 
 
 def test_title():
