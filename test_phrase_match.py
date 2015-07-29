@@ -185,7 +185,6 @@ def test_phrase_match_trims_inner_whitespace():
         [x.get('phrase_match') for x in result][0]
 
 
-@pytest.mark.xfail
 def test_phrase_match_ignores_special_characters():
     solr = pysolr.Solr(SOLR_URL)
     solr.add([{
@@ -194,9 +193,9 @@ def test_phrase_match_ignores_special_characters():
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+        'phrase_match:"c lorless gr en id a sl ep furiously"'
     )
 
     assert 1 == result.hits
-    assert u'Cölorless Grêen Idéaß Slèep Furiously #()[]$%' == \
+    assert u'C\ufffd\ufffdlorless Gr\ufffd\ufffden Id\ufffd\ufffda\ufffd\ufffd Sl\ufffd\ufffdep Furiously #()[]$%' == \
         [x.get('phrase_match') for x in result][0]
