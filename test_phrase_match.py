@@ -169,6 +169,22 @@ def test_phrase_match_trims_whitespace():
         [x.get('phrase_match') for x in result][0]
 
 
+def test_phrase_match_trims_inner_whitespace():
+    solr = pysolr.Solr(SOLR_URL)
+    solr.add([{
+        'id': '1',
+        'phrase_match': 'Colorless    Green Ideas Sleep Furiously',
+    }])
+
+    result = solr.search(
+        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+    )
+
+    assert 1 == result.hits
+    assert u'Colorless    Green Ideas Sleep Furiously' == \
+        [x.get('phrase_match') for x in result][0]
+
+
 @pytest.mark.xfail
 def test_phrase_match_ignores_special_characters():
     solr = pysolr.Solr(SOLR_URL)

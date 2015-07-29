@@ -27,6 +27,10 @@
                 pattern="([^a-z\p{Space}])"
                 replacement="" replace="all" />
 
+        <!-- Replace multiple whitespace characters with just a single blank.
+        -->
+        <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="\W+" replacement=" "/>
+
       </analyzer>
     </fieldType>
   </types>
