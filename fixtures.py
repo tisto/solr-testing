@@ -7,6 +7,7 @@ import pytest
 import time
 import urllib2
 import os
+import shutil
 import signal
 import sys
 
@@ -15,6 +16,23 @@ SOLR_URL = 'http://localhost:8989/solr'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
+
+
+def setup_solr_core(solr_core):
+    source_dir = 'test-solr/solr/collection1'
+    target_dir = 'test-solr/solr/{}'.format(solr_core)
+    # Remove old core dir if it exists
+    if os.path.isdir(target_dir):
+        shutil.rmtree(target_dir)
+    # Make a copy of the collection1 core
+    shutil.copytree(
+        source_dir,
+        target_dir
+    )
+    # Write core.properties configuration file
+    with open('{}/core.properties'.format(target_dir), 'r+') as core_properties:  # noqa
+        core_properties.seek(0)
+        core_properties.write('name={}'.format(solr_core))
 
 
 def prepare_solrconfig():
@@ -37,6 +55,7 @@ def prepare_schema():
 
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
+    setup_solr_core('phrase_match')
     prepare_solrconfig()
     prepare_schema()
     solr_process = subprocess.Popen(
