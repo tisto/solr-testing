@@ -19,6 +19,11 @@ SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 
 
 def setup_solr_core(solr_core):
+    """Set up a Solr core for testing. Try to look up custom solrconfig.xml and
+       schema.xml from the templates directory. e.g. a custom 'phrase_match'
+       schema would have the filename 'phrase_match-schema.xml' and the
+       solrconfig would have the filename 'phrase_match-solrconfig.xml.'
+    """
     source_dir = 'test-solr/solr/collection1'
     target_dir = 'test-solr/solr/{}'.format(solr_core)
     # Remove old core dir if it exists
@@ -33,8 +38,14 @@ def setup_solr_core(solr_core):
     with open('{}/core.properties'.format(target_dir), 'r+') as core_properties:  # noqa
         core_properties.seek(0)
         core_properties.write('name={}'.format(solr_core))
-    prepare_solrconfig()
-    prepare_schema('phrase_match-schema.xml')
+    # Load solrconfig.xml if file exists
+    solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
+    if os.path.isfile(solrconfig_xml):
+        prepare_solrconfig(solrconfig_xml)
+    # Load schema.xml if file exists
+    schema_xml = '{}-schema.xml'.format(solr_core)
+    if os.path.isfile(schema_xml):
+        prepare_schema(schema_xml)
 
 
 def prepare_solrconfig(solrconfig_xml='solrconfig.xml'):
