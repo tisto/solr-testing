@@ -43,11 +43,11 @@ def setup_solr_core(solr_core):
         core_properties.write('name={}'.format(solr_core))
     # Load solrconfig.xml if file exists
     solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
-    if os.path.isfile(solrconfig_xml):
+    if os.path.isfile('templates/{}'.format(solrconfig_xml)):
         prepare_solrconfig(solrconfig_xml)
     # Load schema.xml if file exists
     schema_xml = '{}-schema.xml'.format(solr_core)
-    if os.path.isfile(schema_xml):
+    if os.path.isfile('templates/{}'.format(schema_xml)):
         prepare_schema(schema_xml)
 
 
