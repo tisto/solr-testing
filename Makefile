@@ -5,13 +5,13 @@ all: bootstrap virtualenv
 
 bootstrap:
 	@echo "Bootstrap"
-	@if [[ ! -f solr-$(SOLR_VERSION).tgz  ]]; then \
-		wget http://archive.apache.org/dist/lucene/solr/$(SOLR_VERSION)/solr-$(SOLR_VERSION).tgz; \
+	@if [[ ! -f downloads/solr-$(SOLR_VERSION).tgz  ]]; then \
+		wget -P downloads http://archive.apache.org/dist/lucene/solr/$(SOLR_VERSION)/solr-$(SOLR_VERSION).tgz; \
 	else \
 		echo "Skip downloading Solr."; \
 	fi;
-	@if [[ ! -d solr-$(SOLR_VERSION)  ]]; then \
-		tar xfvz solr-$(SOLR_VERSION).tgz; \
+	@if [[ ! -d downloads/solr-$(SOLR_VERSION)  ]]; then \
+		tar xfvz downloads/solr-$(SOLR_VERSION).tgz -C downloads; \
 	else \
 		echo "Skip extracting Solr."; \
 	fi
