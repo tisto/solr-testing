@@ -2,7 +2,6 @@
 from fixtures import *
 
 import subprocess
-import pysolr
 import pytest
 import time
 import urllib2
@@ -102,9 +101,3 @@ def solr(request):
 
     request.addfinalizer(fin)
     return solr_process
-
-
-@pytest.fixture(scope="function", autouse=True)
-def clear_solr(request):
-    solr = pysolr.Solr(SOLR_URL)
-    solr.delete(q='*:*')

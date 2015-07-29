@@ -6,6 +6,12 @@ import pysolr
 SOLR_URL = 'http://localhost:8989/solr/phrase_match'
 
 
+@pytest.fixture(scope="function", autouse=True)
+def clear_solr(request):
+    solr = pysolr.Solr(SOLR_URL)
+    solr.delete(q='*:*')
+
+
 def test_phrase_match_exact():
     solr = pysolr.Solr(SOLR_URL)
     solr.add([{
