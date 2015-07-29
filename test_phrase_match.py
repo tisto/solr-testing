@@ -24,6 +24,10 @@ def solr(request):
         preexec_fn=os.setsid,
         cwd=TEST_DIR
     )
+
+    def fin():
+        os.killpg(solr_process.pid, signal.SIGTERM)
+
     # Poll Solr until it is up and running
     for i in range(1, 10):
         try:
@@ -35,16 +39,8 @@ def solr(request):
             time.sleep(3)
             sys.stdout.write('.')
         if i == 9:
-            subprocess.call(
-                './solr-instance stop',
-                shell=True,
-                close_fds=True,
-                cwd=TEST_DIR
-            )
+            fin()
             sys.stdout.write('Solr Instance could not be started !!!')
-
-    def fin():
-        os.killpg(solr_process.pid, signal.SIGTERM)
 
     request.addfinalizer(fin)
     return solr_process
