@@ -15,6 +15,11 @@ bootstrap:
 	else \
 		echo "Skip extracting Solr."; \
 	fi
+	@if [[ ! -d test-solr ]]; then \
+		cp -Rv downloads/solr-$(SOLR_VERSION)/example/ test-solr; \
+	else \
+		echo "Skip creating test-solr."; \
+	fi
 
 virtualenv:
 	@echo "Create Virtual Python Environment"

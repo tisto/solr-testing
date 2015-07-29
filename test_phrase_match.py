@@ -8,7 +8,7 @@ import signal
 import sys
 
 
-TEST_DIR = 'test'
+TEST_DIR = 'test-solr'
 SOLR_URL = 'http://localhost:8989/solr'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
