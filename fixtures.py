@@ -38,8 +38,7 @@ def setup_solr_core(solr_core):
         target_dir
     )
     # Write core.properties configuration file
-    with open('{}/core.properties'.format(target_dir), 'r+') as core_properties:  # noqa
-        core_properties.seek(0)
+    with open('{}/core.properties'.format(target_dir), 'w') as core_properties:  # noqa
         core_properties.write('name={}'.format(solr_core))
     # Load solrconfig.xml if file exists
     solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
@@ -51,7 +50,7 @@ def setup_solr_core(solr_core):
         prepare_schema(schema_xml)
 
 
-def prepare_solrconfig(solrconfig_xml='solrconfig.xml'):
+def prepare_solrconfig(solrconfig_xml):
     with open('templates/{}'.format(solrconfig_xml), 'r') as template:
         with open(
             'test-solr/solr/collection1/conf/solrconfig.xml',
@@ -60,7 +59,7 @@ def prepare_solrconfig(solrconfig_xml='solrconfig.xml'):
             solrconfig.write(template.read())
 
 
-def prepare_schema(schema_xml='schema.xml'):
+def prepare_schema(schema_xml):
     with open('templates/{}'.format(schema_xml), 'r') as template:
         with open(
             'test-solr/solr/collection1/conf/schema.xml',
@@ -72,6 +71,7 @@ def prepare_schema(schema_xml='schema.xml'):
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
     for solr_core in SOLR_CORES:
+        print('Prepare core {}'.format(solr_core))
         setup_solr_core(solr_core)
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
