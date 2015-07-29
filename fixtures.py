@@ -16,6 +16,9 @@ SOLR_URL = 'http://localhost:8989/solr'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
+SOLR_CORES = [
+    'phrase_match'
+]
 
 
 def setup_solr_core(solr_core):
@@ -68,7 +71,8 @@ def prepare_schema(schema_xml='schema.xml'):
 
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
-    setup_solr_core('phrase_match')
+    for solr_core in SOLR_CORES:
+        setup_solr_core(solr_core)
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
         stdout=subprocess.PIPE,
