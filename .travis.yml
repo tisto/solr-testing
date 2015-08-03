@@ -5,6 +5,7 @@ cache:
   pip: true
   directories:
     - $HOME/downloads
+    - /home/travis/build/tisto/solr-testing/downloads
 env:
   - SOLR_VERSION=4.5.1
 #matrix:
