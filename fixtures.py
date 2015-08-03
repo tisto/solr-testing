@@ -2,6 +2,7 @@
 from fixtures import *
 
 import subprocess
+import pysolr
 import pytest
 import time
 import urllib2
@@ -15,6 +16,7 @@ TEST_DIR = 'test-solr'
 SOLR_URL = 'http://localhost:8989/solr/phrase_match'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
+SOLR_TIMEOUT = 1
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 SOLR_CORES = [
     'phrase_match'
@@ -100,4 +102,5 @@ def solr(request):
             print('Solr Instance could not be started !!!')
 
     request.addfinalizer(fin)
-    return solr_process
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
+    return solr
