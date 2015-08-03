@@ -122,3 +122,20 @@ def test_phrase_match_replaces_non_ascii_characters():
     assert 1 == result.hits
     assert u'Cölorless Grêen Idéaß Slèep Furiously' == \
         [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_ignores_special_characters():
+    index = u'Colorless Green-Ideas Sleep=Furiously #?&[]()'
+    query = u'Colorless Green Ideas Sleep Furiously'
+    solr = pysolr.Solr(SOLR_URL)
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
