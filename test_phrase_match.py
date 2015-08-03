@@ -108,17 +108,17 @@ def test_phrase_match_trims_inner_whitespace():
         [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_ignores_special_characters():
+def test_phrase_match_replaces_non_ascii_characters():
     solr = pysolr.Solr(SOLR_URL)
     solr.add([{
         'id': '1',
-        'phrase_match': 'Cölorless Grêen Idéaß Slèep Furiously #()[]$%',
+        'phrase_match': u'Cölorless Grêen Idéaß Slèep Furiously',
     }])
 
     result = solr.search(
-        'phrase_match:"c lorless gr en id a sl ep furiously"'
+        'phrase_match:"Colorless Green Ideass Sleep Furiously"'
     )
 
     assert 1 == result.hits
-    assert u'C\ufffd\ufffdlorless Gr\ufffd\ufffden Id\ufffd\ufffda\ufffd\ufffd Sl\ufffd\ufffdep Furiously #()[]$%' == \
+    assert u'C\xf6lorless Gr\xeaen Id\xe9a\xdf Sl\xe8ep Furiously' == \
         [x.get('phrase_match') for x in result][0]
