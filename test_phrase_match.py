@@ -4,16 +4,17 @@ from fixtures import *
 import pysolr
 
 SOLR_URL = 'http://localhost:8989/solr/phrase_match'
+SOLR_TIMEOUT = 1
 
 
 @pytest.fixture(scope="function", autouse=True)
 def clear_solr(request):
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.delete(q='*:*')
 
 
 def test_phrase_match_exact():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': 'Colorless Green Ideas Sleep Furiously',
@@ -29,7 +30,7 @@ def test_phrase_match_exact():
 
 
 def test_phrase_match_ignores_lowercase():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': 'Colorless Green Ideas Sleep Furiously',
@@ -45,7 +46,7 @@ def test_phrase_match_ignores_lowercase():
 
 
 def test_phrase_match_ignores_uppercase():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': 'colorless green ideas sleep furiously',
@@ -61,7 +62,7 @@ def test_phrase_match_ignores_uppercase():
 
 
 def test_phrase_match_ignores_punctuation():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': 'Colorless, Green; Ideas. Sleep? Furiously!',
@@ -77,7 +78,7 @@ def test_phrase_match_ignores_punctuation():
 
 
 def test_phrase_match_trims_whitespace():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': '  Colorless Green Ideas Sleep Furiously         ',
@@ -93,7 +94,7 @@ def test_phrase_match_trims_whitespace():
 
 
 def test_phrase_match_trims_inner_whitespace():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': 'Colorless    Green Ideas Sleep Furiously',
@@ -109,7 +110,7 @@ def test_phrase_match_trims_inner_whitespace():
 
 
 def test_phrase_match_replaces_non_ascii_characters():
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': u'Cölorless Grêen Idéaß Slèep Furiously',
@@ -127,7 +128,7 @@ def test_phrase_match_replaces_non_ascii_characters():
 def test_phrase_match_ignores_special_characters():
     index = u'Colorless Green-Ideas Sleep=Furiously #?&[]()'
     query = u'Colorless Green Ideas Sleep Furiously'
-    solr = pysolr.Solr(SOLR_URL)
+    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
     solr.add([{
         'id': '1',
         'phrase_match': index,
