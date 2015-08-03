@@ -11,8 +11,12 @@
     <fieldType name="phrase_match" class="solr.TextField">
       <analyzer>
 
+        <!-- Replace non-ascii characters into ascii equivalent.
+             A later filter won't work since the KeywordTokenizer treats the
+             entire field as a single keyword.
+        -->
         <charFilter class="solr.MappingCharFilterFactory"
-                    mapping="mapping-ISOLatin1Accent.txt"
+                    mapping="mapping-FoldToASCII.txt"
                     />
 
         <!-- Treat the entire field as a single token. -->
@@ -23,9 +27,6 @@
 
         <!-- Trims whitespace at either end of a token. -->
         <filter class="solr.TrimFilterFactory" />
-
-        <!-- Replace non-ascii characters into ascii equivalent. -->
-        <!--<filter class="solr.ASCIIFoldingFilterFactory" />-->
 
         <!-- Remove all characters except lower case and whitespace.
              Java RegExp Patterns: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
