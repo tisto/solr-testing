@@ -6,7 +6,6 @@ all: bootstrap virtualenv
 
 bootstrap:
 	@echo "Bootstrap"
-	echo $(CURRENT_DIR)
 	@if [[ ! -f $(CURRENT_DIR)/downloads/solr-$(SOLR_VERSION).tgz  ]]; then \
 		wget -P $(CURRENT_DIR)/downloads http://archive.apache.org/dist/lucene/solr/$(SOLR_VERSION)/solr-$(SOLR_VERSION).tgz; \
 	else \
