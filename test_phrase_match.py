@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
 from fixtures import *
 
-import pysolr
-
-SOLR_URL = 'http://localhost:8989/solr/phrase_match'
-SOLR_TIMEOUT = 1
-
 
 @pytest.fixture(scope="function", autouse=True)
-def clear_solr(request):
-    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
+def clear_solr(solr):
     solr.delete(q='*:*')
 
 
