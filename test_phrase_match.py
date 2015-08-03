@@ -23,13 +23,15 @@ def test_phrase_match_exact(solr):
 
 
 def test_phrase_match_ignores_lowercase(solr):
+    index = 'Colorless Green Ideas Sleep Furiously'
+    query = 'colorless green ideas sleep furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': 'Colorless Green Ideas Sleep Furiously',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"colorless green ideas sleep furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
@@ -38,13 +40,15 @@ def test_phrase_match_ignores_lowercase(solr):
 
 
 def test_phrase_match_ignores_uppercase(solr):
+    index = 'colorless green ideas sleep furiously'
+    query = 'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': 'colorless green ideas sleep furiously',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
@@ -53,13 +57,15 @@ def test_phrase_match_ignores_uppercase(solr):
 
 
 def test_phrase_match_ignores_punctuation(solr):
+    index = 'Colorless, Green; Ideas. Sleep? Furiously!'
+    query = 'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': 'Colorless, Green; Ideas. Sleep? Furiously!',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
@@ -68,13 +74,15 @@ def test_phrase_match_ignores_punctuation(solr):
 
 
 def test_phrase_match_trims_whitespace(solr):
+    index = '  Colorless Green Ideas Sleep Furiously         '
+    query = 'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': '  Colorless Green Ideas Sleep Furiously         ',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
@@ -83,13 +91,15 @@ def test_phrase_match_trims_whitespace(solr):
 
 
 def test_phrase_match_trims_inner_whitespace(solr):
+    index = 'Colorless    Green Ideas Sleep Furiously'
+    query = 'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': 'Colorless    Green Ideas Sleep Furiously',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideas Sleep Furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
@@ -98,13 +108,15 @@ def test_phrase_match_trims_inner_whitespace(solr):
 
 
 def test_phrase_match_replaces_non_ascii_characters(solr):
+    index = u'Cölorless Grêen Idéaß Slèep Furiously'
+    query = u'Colorless Green Ideass Sleep Furiously'
     solr.add([{
         'id': '1',
-        'phrase_match': u'Cölorless Grêen Idéaß Slèep Furiously',
+        'phrase_match': index,
     }])
 
     result = solr.search(
-        'phrase_match:"Colorless Green Ideass Sleep Furiously"'
+        'phrase_match:"{}"'.format(query)
     )
 
     assert 1 == result.hits
