@@ -120,5 +120,5 @@ def test_phrase_match_replaces_non_ascii_characters():
     )
 
     assert 1 == result.hits
-    assert u'C\xf6lorless Gr\xeaen Id\xe9a\xdf Sl\xe8ep Furiously' == \
+    assert u'Cölorless Grêen Idéaß Slèep Furiously' == \
         [x.get('phrase_match') for x in result][0]
