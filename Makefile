@@ -36,6 +36,7 @@ virtualenv:
 clean:
 	@echo "Clean"
 	rm -rf test-solr
+
 test:
 	@echo "Run Tests"
 	py.test
