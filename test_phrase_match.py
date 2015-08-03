@@ -141,9 +141,16 @@ def test_phrase_match_ignores_special_characters(solr):
 
 
 def test_phrase_match_regression_1(solr):
-    index = u'Colorless Green-Ideas Sleep=Furiously #?&[]()'
-    query = u'Colorless Green Ideas Sleep Furiously'
+    index = 'Revista latino-americana de enfermagem'
+    query = 'Revista Latino-Americana de Enfermagem'
     solr.add([{
         'id': '1',
         'phrase_match': index,
     }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
