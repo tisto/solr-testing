@@ -75,9 +75,11 @@ def solr(request):
     for solr_core in SOLR_CORES:
         print('Prepare core {}'.format(solr_core))
         setup_solr_core(solr_core)
+    devnull = open('/dev/null', 'w')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
-        stdout=subprocess.PIPE,
+        stdout=devnull,
+        stderr=devnull,
         shell=True,
         preexec_fn=os.setsid,
         cwd=TEST_DIR

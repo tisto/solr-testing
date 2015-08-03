@@ -126,3 +126,12 @@ def test_phrase_match_ignores_special_characters(solr):
 
     assert 1 == result.hits
     assert index == [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_regression_1(solr):
+    index = u'Colorless Green-Ideas Sleep=Furiously #?&[]()'
+    query = u'Colorless Green Ideas Sleep Furiously'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
