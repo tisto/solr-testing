@@ -140,8 +140,24 @@ def test_phrase_match_ignores_special_characters(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_removes_content_in_brackets(solr):
+def test_phrase_match_ignores_content_in_brackets(solr):
     index = u'Colorless Green Ideas Sleep Furiously (or not)'
+    query = u'Colorless Green Ideas Sleep Furiously'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_ignores_everything_after_a_colon(solr):
+    index = u'Colorless Green Ideas Sleep Furiously: or not'
     query = u'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
@@ -219,3 +235,18 @@ def test_phrase_match_regression_4(solr):
     assert 1 == result.hits
     assert index == [x.get('phrase_match') for x in result][0]
 
+
+def test_phrase_match_regression_5(solr):
+    index = 'Journal of Clinical Oncology'
+    query = 'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]

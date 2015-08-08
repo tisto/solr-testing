@@ -17,6 +17,12 @@
                     replacement=""
                     />
 
+        <!-- Ignore everything after a colon. -->
+        <charFilter class="solr.PatternReplaceCharFilterFactory"
+                    pattern="\:.*"
+                    replacement=""
+                    />
+
         <!-- Replace non-ascii characters into ascii equivalent.
              A later filter won't work since the KeywordTokenizer treats the
              entire field as a single keyword.
