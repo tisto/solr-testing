@@ -11,6 +11,12 @@
     <fieldType name="phrase_match" class="solr.TextField">
       <analyzer>
 
+        <!-- Remove content in brackets. -->
+        <charFilter class="solr.PatternReplaceCharFilterFactory"
+                    pattern="\(.*\)"
+                    replacement=""
+                    />
+
         <!-- Replace non-ascii characters into ascii equivalent.
              A later filter won't work since the KeywordTokenizer treats the
              entire field as a single keyword.
@@ -45,6 +51,11 @@
 
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" />
+    <field name="title" type="string" indexed="true" stored="true" required="false" />
+    <field name="periodical_article" type="string" indexed="true" stored="true" required="false" />
+    <field name="periodical_full_name" type="string" indexed="true" stored="true" required="false" />
+    <field name="year" type="string" indexed="true" stored="true" required="false" />
+    <field name="archive" type="string" indexed="true" stored="true" required="false" />
     <field name="phrase_match" type="phrase_match" indexed="true" stored="true" />
     <dynamicField name="*"  type="string"  indexed="true"  stored="true" />
   </fields>
