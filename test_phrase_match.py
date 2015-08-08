@@ -216,6 +216,10 @@ def test_phrase_match_replaces_ampersands_with_and(solr):
     (
         u'Eur.J Cancer Care (Engl.)',
         u'EUR J CANCER CARE'
+    ),
+    (
+        u'Journal of Clinical Oncology',
+        u'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
     )
 ])
 def test_phrase_match(solr, index, query):
