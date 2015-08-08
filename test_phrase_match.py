@@ -188,9 +188,37 @@ def test_phrase_match_replaces_ampersands_with_and(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_regression_1(solr):
-    index = 'Revista latino-americana de enfermagem'
-    query = 'Revista Latino-Americana de Enfermagem'
+@pytest.mark.parametrize("index, query", [
+    (
+        'Revista latino-americana de enfermagem',
+        'Revista Latino-Americana de Enfermagem'
+    ),
+    (
+        'Radiation oncology (London, England)',
+        'Radiation Oncology'
+    ),
+    (
+        'J.Neuro-Oncol.',
+        'J. Neuro-Oncol.'
+    ),
+    (
+        'Oncology (Williston Park, N.Y.)',
+        'ONCOLOGY (United States)'
+    ),
+    (
+        'Journal of Clinical Oncology',
+        'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+    ),
+    (
+        u'Journal of Pain & Palliative Care Pharmacotherapy',
+        u'Journal of Pain and Palliative Care Pharmacotherapy'
+    ),
+    (
+        u'Eur.J Cancer Care (Engl.)',
+        u'EUR J CANCER CARE'
+    )
+])
+def test_phrase_match(solr, index, query):
     solr.add([{
         'id': '1',
         'phrase_match': index,
@@ -202,100 +230,3 @@ def test_phrase_match_regression_1(solr):
 
     assert 1 == result.hits
     assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_2(solr):
-    index = 'Radiation oncology (London, England)'
-    query = 'Radiation Oncology'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_3(solr):
-    index = 'J.Neuro-Oncol.'
-    query = 'J. Neuro-Oncol.'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_4(solr):
-    index = 'Oncology (Williston Park, N.Y.)'
-    query = 'ONCOLOGY (United States)'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_5(solr):
-    index = 'Journal of Clinical Oncology'
-    query = 'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_6(solr):
-    index = u'Journal of Pain & Palliative Care Pharmacotherapy'
-    query = u'Journal of Pain and Palliative Care Pharmacotherapy'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
-def test_phrase_match_regression_7(solr):
-    index = u'Eur.J Cancer Care (Engl.)'
-    query = u'EUR J CANCER CARE'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
