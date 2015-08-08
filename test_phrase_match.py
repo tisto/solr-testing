@@ -203,3 +203,19 @@ def test_phrase_match_regression_3(solr):
     assert 1 == result.hits
     assert index == [x.get('phrase_match') for x in result][0]
 
+
+def test_phrase_match_regression_4(solr):
+    index = 'Oncology (Williston Park, N.Y.)'
+    query = 'ONCOLOGY (United States)'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
