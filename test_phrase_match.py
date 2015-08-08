@@ -173,7 +173,7 @@ def test_phrase_match_regression_1(solr):
 
 
 def test_phrase_match_regression_2(solr):
-    index = 'Radiation Oncology (London, England)'
+    index = 'Radiation oncology (London, England)'
     query = 'Radiation Oncology'
     solr.add([{
         'id': '1',
