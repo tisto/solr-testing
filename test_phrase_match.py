@@ -186,3 +186,20 @@ def test_phrase_match_regression_2(solr):
 
     assert 1 == result.hits
     assert index == [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_regression_3(solr):
+    index = 'J.Neuro-Oncol.'
+    query = 'J. Neuro-Oncol.'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
