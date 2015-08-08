@@ -23,6 +23,12 @@
                     replacement=""
                     />
 
+        <!-- Replace '&' with 'and'. -->
+        <charFilter class="solr.PatternReplaceCharFilterFactory"
+                    pattern="\&amp;"
+                    replacement="and"
+                    />
+
         <!-- Replace non-ascii characters into ascii equivalent.
              A later filter won't work since the KeywordTokenizer treats the
              entire field as a single keyword.

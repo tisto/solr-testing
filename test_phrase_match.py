@@ -125,7 +125,7 @@ def test_phrase_match_replaces_non_ascii_characters(solr):
 
 
 def test_phrase_match_ignores_special_characters(solr):
-    index = u'Colorless Green-Ideas Sleep=Furiously #?&[]()'
+    index = u'Colorless Green-Ideas Sleep=Furiously #?/[]()'
     query = u'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
@@ -159,6 +159,22 @@ def test_phrase_match_ignores_content_in_brackets(solr):
 def test_phrase_match_ignores_everything_after_a_colon(solr):
     index = u'Colorless Green Ideas Sleep Furiously: or not'
     query = u'Colorless Green Ideas Sleep Furiously'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_replaces_ampersands_with_and(solr):
+    index = u'Colorless & Green Ideas Sleep Furiously'
+    query = u'Colorless and Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
         'phrase_match': index,
@@ -239,6 +255,22 @@ def test_phrase_match_regression_4(solr):
 def test_phrase_match_regression_5(solr):
     index = 'Journal of Clinical Oncology'
     query = 'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
+def test_phrase_match_regression_6(solr):
+    index = u'Journal of Pain & Palliative Care Pharmacotherapy'
+    query = u'Journal of Pain and Palliative Care Pharmacotherapy'
     solr.add([{
         'id': '1',
         'phrase_match': index,
