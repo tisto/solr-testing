@@ -188,6 +188,22 @@ def test_phrase_match_replaces_ampersands_with_and(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
+def test_phrase_match_ignores_stopwords(solr):
+    index = u'The Cochrane database of systematic reviews'
+    query = u'Cochrane database of systematic reviews'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
 @pytest.mark.parametrize("index, query", [
     (
         'Revista latino-americana de enfermagem',
@@ -220,6 +236,14 @@ def test_phrase_match_replaces_ampersands_with_and(solr):
     (
         u'Journal of Clinical Oncology',
         u'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+    ),
+#    (
+#        u'The American journal of hospice & palliative care',
+#        u'American Journal of Hospice and Palliative Medicine'
+#    ),
+    (
+        u'The Cochrane database of systematic reviews',
+        u'Cochrane database of systematic reviews (Online)'
     )
 ])
 def test_phrase_match(solr, index, query):

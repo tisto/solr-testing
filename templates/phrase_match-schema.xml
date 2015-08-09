@@ -38,10 +38,15 @@
                     />
 
         <!-- Treat the entire field as a single token. -->
-        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <tokenizer class="solr.StandardTokenizerFactory"/>
 
         <!-- Lowercases the letters in each token. -->
         <filter class="solr.LowerCaseFilterFactory" />
+
+        <!-- Stopwords -->
+        <filter class="solr.StopFilterFactory"
+                ignoreCase="true"
+                words="stopwords.txt" />
 
         <!-- Trims whitespace at either end of a token. -->
         <filter class="solr.TrimFilterFactory" />
@@ -63,9 +68,9 @@
 
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true" />
-    <field name="title" type="string" indexed="true" stored="true" required="false" />
-    <field name="periodical_article" type="string" indexed="true" stored="true" required="false" />
-    <field name="periodical_full_name" type="string" indexed="true" stored="true" required="false" />
+    <field name="title" type="phrase_match" indexed="true" stored="true" required="false" />
+    <field name="periodical_article" type="phrase_match" indexed="true" stored="true" required="false" />
+    <field name="periodical_full_name" type="phrase_match" indexed="true" stored="true" required="false" />
     <field name="year" type="string" indexed="true" stored="true" required="false" />
     <field name="archive" type="string" indexed="true" stored="true" required="false" />
     <field name="phrase_match" type="phrase_match" indexed="true" stored="true" />

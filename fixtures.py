@@ -50,6 +50,8 @@ def setup_solr_core(solr_core):
     schema_xml = '{}-schema.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(schema_xml)):
         prepare_schema(schema_xml, solr_core)
+    # Prepare stopwords
+    prepare_stopwords_txt(solr_core)
 
 
 def prepare_solrconfig(solrconfig_xml, solr_core):
@@ -65,6 +67,15 @@ def prepare_schema(schema_xml, solr_core):
     with open('templates/{}'.format(schema_xml), 'r') as template:
         with open(
             'test-solr/solr/{}/conf/schema.xml'.format(solr_core),
+            'w'
+        ) as schema:
+            schema.write(template.read())
+
+
+def prepare_stopwords_txt(solr_core):
+    with open('templates/stopwords.txt') as template:
+        with open(
+            'test-solr/solr/{}/conf/stopwords.txt'.format(solr_core),
             'w'
         ) as schema:
             schema.write(template.read())
