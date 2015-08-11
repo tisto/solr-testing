@@ -2,9 +2,14 @@
 from fixtures import *
 
 
+@pytest.fixture(scope="module", autouse=True)
+def solr():
+    return setup_solr_core('phrase_match')
+
+
 @pytest.fixture(scope="function", autouse=True)
-def clear_solr(solr):
-    solr.delete(q='*:*')
+def clear_solr(solr_base):
+    solr_base.delete(q='*:*')
 
 
 def test_phrase_match_exact(solr):
@@ -246,9 +251,14 @@ def test_phrase_match_ignores_stopwords(solr):
         u'Cochrane database of systematic reviews (Online)'
     ),
     (
-        u'Search for evidence-based approaches for the prevention and palliation of hand-foot skin reaction(HFSR) caused by the multikinase inhibitors(MKIs)',  # noaq
+        u'Search for evidence-based approaches for the prevention and palliation of hand-foot skin reaction(HFSR) caused by the multikinase inhibitors(MKIs)',  # noqa
         u'Search for evidence-based approaches for the prevention and palliation of hand--foot skin reaction (HFSR) caused by the multikinase inhibitors (MKIs).'  # noqa
+    ),
+    (
+        u'Smoking Cessation in Lung Cancer--Achievable and Effective.',
+        u'Smoking cessation in lung cancer - Achievable and effective'
     )
+
 ])
 def test_phrase_match_regressions(solr, index, query):
     solr.add([{
