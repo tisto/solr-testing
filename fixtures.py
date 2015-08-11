@@ -4,6 +4,7 @@ from fixtures import *
 import subprocess
 import pysolr
 import pytest
+import requests
 import time
 import urllib2
 import os
@@ -39,9 +40,10 @@ def setup_solr_core(solr_core):
         source_dir,
         target_dir
     )
-    # Write core.properties configuration file
-    with open('{}/core.properties'.format(target_dir), 'w') as core_properties:  # noqa
-        core_properties.write('name={}'.format(solr_core))
+
+    # Remove core.properties from new core (requirement to add a new core)
+    if os.path.isfile('{}/core.properties'.format(target_dir)):
+        os.remove('{}/core.properties'.format(target_dir))
     # Load solrconfig.xml if file exists
     solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(solrconfig_xml)):
@@ -52,6 +54,13 @@ def setup_solr_core(solr_core):
         prepare_schema(schema_xml, solr_core)
     # Prepare stopwords
     prepare_stopwords_txt(solr_core)
+
+    requests.get(
+        'http://localhost:8989/solr/' +
+        'admin/cores?action=CREATE' +
+        '&name=phrase_match' +
+        '&instanceDir=phrase_match'
+    )
 
 
 def prepare_solrconfig(solrconfig_xml, solr_core):
@@ -83,9 +92,6 @@ def prepare_stopwords_txt(solr_core):
 
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
-    for solr_core in SOLR_CORES:
-        print('Prepare core {}'.format(solr_core))
-        setup_solr_core(solr_core)
     devnull = open('/dev/null', 'w')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
@@ -113,6 +119,10 @@ def solr(request):
         if i == 9:
             fin()
             print('Solr Instance could not be started !!!')
+
+    for solr_core in SOLR_CORES:
+        print('Prepare core {}'.format(solr_core))
+        setup_solr_core(solr_core)
 
     request.addfinalizer(fin)
     solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
