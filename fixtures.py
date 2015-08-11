@@ -20,7 +20,8 @@ SOLR_PORT = '8989'
 SOLR_TIMEOUT = 10
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 SOLR_CORES = [
-    'phrase_match'
+    'phrase_match',
+    'journal'
 ]
 
 
