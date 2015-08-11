@@ -6,8 +6,8 @@ import os
 
 
 @pytest.fixture(scope="module", autouse=True)
-def load_ris_data(solr):
-    solr.delete(q='*:*')
+def solr():
+    solr = setup_solr_core('phrase_match')
     solr.add(
         parse_risfile(
             'export_information_ris_zell_20150417.txt',
@@ -20,6 +20,13 @@ def load_ris_data(solr):
             archive=True
         )
     )
+    return solr
+
+
+@pytest.fixture(scope="function", autouse=True)
+def clear_solr(solr_base, solr):
+    solr_base.delete(q='*:*')
+
 
 REGRESSIONS = []
 with open('regressions.csv', 'r') as csvfile:
