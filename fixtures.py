@@ -56,8 +56,8 @@ def setup_solr_core(solr_core):
     requests.get(
         'http://localhost:8989/solr/' +
         'admin/cores?action=CREATE' +
-        '&name=phrase_match' +
-        '&instanceDir=phrase_match'
+        '&name={}'.format(solr_core) +
+        '&instanceDir={}'.format(solr_core)
     )
 
     solr = pysolr.Solr(SOLR_BASE_URL + '/' + solr_core, timeout=SOLR_TIMEOUT)
