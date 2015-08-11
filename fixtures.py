@@ -83,9 +83,6 @@ def prepare_stopwords_txt(solr_core):
 
 @pytest.fixture(scope="module", autouse=True)
 def solr(request):
-    for solr_core in SOLR_CORES:
-        print('Prepare core {}'.format(solr_core))
-        setup_solr_core(solr_core)
     devnull = open('/dev/null', 'w')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
@@ -113,6 +110,10 @@ def solr(request):
         if i == 9:
             fin()
             print('Solr Instance could not be started !!!')
+
+    for solr_core in SOLR_CORES:
+        print('Prepare core {}'.format(solr_core))
+        setup_solr_core(solr_core)
 
     request.addfinalizer(fin)
     solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
