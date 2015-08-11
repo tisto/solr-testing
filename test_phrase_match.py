@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
 from fixtures import *
+from pysolr import SolrCoreAdmin
+import shutil
 
 
 @pytest.fixture(scope="module", autouse=True)
-def solr():
-    return setup_solr_core('phrase_match')
+def solr(request):
+    solr_core = setup_solr_core('phrase_match')
+
+    def fin():
+        core_admin = SolrCoreAdmin('http://localhost:8989/solr/admin/cores')
+        core_admin.unload('phrase_match')
+        target_dir = 'test-solr/solr/{}'.format('phrase_match')
+        if os.path.isdir(target_dir):
+            shutil.rmtree(target_dir)
+
+    request.addfinalizer(fin)
+
+    return solr_core
 
 
 @pytest.fixture(scope="function", autouse=True)

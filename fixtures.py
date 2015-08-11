@@ -21,7 +21,7 @@ SOLR_TIMEOUT = 10
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
 
 
-def setup_solr_core(solr_core):
+def setup_solr_core(solr_core, schema_xml=None, solrconfig_xml=None):
     """Set up a Solr core for testing. Try to look up custom solrconfig.xml and
        schema.xml from the templates directory. e.g. a custom 'phrase_match'
        schema would have the filename 'phrase_match-schema.xml' and the
@@ -42,24 +42,30 @@ def setup_solr_core(solr_core):
     if os.path.isfile('{}/core.properties'.format(target_dir)):
         os.remove('{}/core.properties'.format(target_dir))
     # Load solrconfig.xml if file exists
-    solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
+    if not solrconfig_xml:
+        solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(solrconfig_xml)):
         prepare_solrconfig(solrconfig_xml, solr_core)
     # Load schema.xml if file exists
-    schema_xml = '{}-schema.xml'.format(solr_core)
+    if not schema_xml:
+        schema_xml = '{}-schema.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(schema_xml)):
         prepare_schema(schema_xml, solr_core)
     # Prepare stopwords
     prepare_stopwords_txt(solr_core)
 
     # Register the new core in Solr
-    requests.get(
+    #core_admin = pysolr.SolrCoreAdmin('http://localhost:8989/solr/admin/cores')
+    #core_admin.create('phrase_match')
+    response = requests.get(
         'http://localhost:8989/solr/' +
         'admin/cores?action=CREATE' +
         '&name={}'.format(solr_core) +
         '&instanceDir={}'.format(solr_core)
     )
 
+    if response.status_code != 200:
+        raise
     solr = pysolr.Solr(SOLR_BASE_URL + '/' + solr_core, timeout=SOLR_TIMEOUT)
     return solr
 
