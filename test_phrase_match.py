@@ -244,9 +244,13 @@ def test_phrase_match_ignores_stopwords(solr):
     (
         u'The Cochrane database of systematic reviews',
         u'Cochrane database of systematic reviews (Online)'
+    ),
+    (
+        u'Search for evidence-based approaches for the prevention and palliation of hand-foot skin reaction(HFSR) caused by the multikinase inhibitors(MKIs)',  # noaq
+        u'Search for evidence-based approaches for the prevention and palliation of hand--foot skin reaction (HFSR) caused by the multikinase inhibitors (MKIs).'  # noqa
     )
 ])
-def test_phrase_match(solr, index, query):
+def test_phrase_match_regressions(solr, index, query):
     solr.add([{
         'id': '1',
         'phrase_match': index,
