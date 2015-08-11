@@ -23,6 +23,15 @@ def solr():
     return solr
 
 
+@pytest.fixture(scope="module", autouse=True)
+def solr_tmp():
+    return setup_solr_core(
+        'phrase_match_tmp',
+        solrconfig_xml='solrconfig.xml',
+        schema_xml='phrase_match-schema.xml'
+    )
+
+
 @pytest.fixture(scope="function", autouse=True)
 def clear_solr(solr_base, solr):
     solr_base.delete(q='*:*')
