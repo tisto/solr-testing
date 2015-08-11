@@ -2,9 +2,14 @@
 from fixtures import *
 
 
+@pytest.fixture(scope="module", autouse=True)
+def solr():
+    return setup_solr_core('phrase_match')
+
+
 @pytest.fixture(scope="function", autouse=True)
-def clear_solr(solr):
-    solr.delete(q='*:*')
+def clear_solr(solr_base):
+    solr_base.delete(q='*:*')
 
 
 def test_phrase_match_exact(solr):

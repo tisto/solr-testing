@@ -14,15 +14,11 @@ import sys
 
 
 TEST_DIR = 'test-solr'
-SOLR_URL = 'http://localhost:8989/solr/phrase_match'
+SOLR_BASE_URL = 'http://localhost:8989/solr'
 SOLR_PING_URL = 'http://localhost:8989/solr/admin/ping'
 SOLR_PORT = '8989'
 SOLR_TIMEOUT = 10
 SOLR_START_CMD = 'java -Djetty.port={} -jar start.jar'.format(SOLR_PORT)
-SOLR_CORES = [
-    'phrase_match',
-    'journal'
-]
 
 
 def setup_solr_core(solr_core):
@@ -56,12 +52,16 @@ def setup_solr_core(solr_core):
     # Prepare stopwords
     prepare_stopwords_txt(solr_core)
 
+    # Register the new core in Solr
     requests.get(
         'http://localhost:8989/solr/' +
         'admin/cores?action=CREATE' +
         '&name=phrase_match' +
         '&instanceDir=phrase_match'
     )
+
+    solr = pysolr.Solr(SOLR_BASE_URL + '/' + solr_core, timeout=SOLR_TIMEOUT)
+    return solr
 
 
 def prepare_solrconfig(solrconfig_xml, solr_core):
@@ -91,8 +91,8 @@ def prepare_stopwords_txt(solr_core):
             schema.write(template.read())
 
 
-@pytest.fixture(scope="module", autouse=True)
-def solr(request):
+@pytest.fixture(scope="session", autouse=True)
+def solr_base(request):
     devnull = open('/dev/null', 'w')
     solr_process = subprocess.Popen(
         SOLR_START_CMD,
@@ -121,10 +121,6 @@ def solr(request):
             fin()
             print('Solr Instance could not be started !!!')
 
-    for solr_core in SOLR_CORES:
-        print('Prepare core {}'.format(solr_core))
-        setup_solr_core(solr_core)
-
     request.addfinalizer(fin)
-    solr = pysolr.Solr(SOLR_URL, timeout=SOLR_TIMEOUT)
+    solr = pysolr.Solr(SOLR_BASE_URL, timeout=SOLR_TIMEOUT)
     return solr
