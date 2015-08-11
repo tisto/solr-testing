@@ -4,6 +4,7 @@ from fixtures import *
 import subprocess
 import pysolr
 import pytest
+import requests
 import time
 import urllib2
 import os
@@ -40,8 +41,8 @@ def setup_solr_core(solr_core):
         target_dir
     )
     # Write core.properties configuration file
-    with open('{}/core.properties'.format(target_dir), 'w') as core_properties:  # noqa
-        core_properties.write('name={}'.format(solr_core))
+    #with open('{}/core.properties'.format(target_dir), 'w') as core_properties:  # noqa
+    #    core_properties.write('name={}'.format(solr_core))
     # Load solrconfig.xml if file exists
     solrconfig_xml = '{}-solrconfig.xml'.format(solr_core)
     if os.path.isfile('templates/{}'.format(solrconfig_xml)):
@@ -52,6 +53,16 @@ def setup_solr_core(solr_core):
         prepare_schema(schema_xml, solr_core)
     # Prepare stopwords
     prepare_stopwords_txt(solr_core)
+
+    response = requests.get(
+        'http://localhost:8989/solr/' +
+        'admin/cores?action=CREATE' +
+        '&core=phrase_match' +
+        '&name=phrase_match' +
+        '&instanceDir=%2Fhome%2Ftimo%2Fworkspace%2Fsolr-testing%2Ftest-solr%2Fsolr%2Fphrase_match'
+    )
+    if response.status_code != 200:
+        import pdb; pdb.set_trace()
 
 
 def prepare_solrconfig(solrconfig_xml, solr_core):
