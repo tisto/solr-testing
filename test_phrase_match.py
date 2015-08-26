@@ -222,6 +222,22 @@ def test_phrase_match_ignores_stopwords(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
+def test_phrase_match_synonyms(solr):
+    index = u'Bar'
+    query = u'Foo'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
 @pytest.mark.parametrize("index, query", [
     (
         'Revista latino-americana de enfermagem',

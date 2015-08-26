@@ -53,6 +53,8 @@ def setup_solr_core(solr_core, schema_xml=None, solrconfig_xml=None):
         prepare_schema(schema_xml, solr_core)
     # Prepare stopwords
     prepare_stopwords_txt(solr_core)
+    # Prepare synonyms
+    prepare_synonyms_txt(solr_core)
 
     # Register the new core in Solr
     #core_admin = pysolr.SolrCoreAdmin('http://localhost:8989/solr/admin/cores')
@@ -92,6 +94,15 @@ def prepare_stopwords_txt(solr_core):
     with open('templates/stopwords.txt') as template:
         with open(
             'test-solr/solr/{}/conf/stopwords.txt'.format(solr_core),
+            'w'
+        ) as schema:
+            schema.write(template.read())
+
+
+def prepare_synonyms_txt(solr_core):
+    with open('templates/synonyms.txt') as template:
+        with open(
+            'test-solr/solr/{}/conf/synonyms.txt'.format(solr_core),
             'w'
         ) as schema:
             schema.write(template.read())

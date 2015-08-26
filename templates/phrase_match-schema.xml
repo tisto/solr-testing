@@ -40,6 +40,14 @@
         <!-- Treat the entire field as a single token. -->
         <tokenizer class="solr.StandardTokenizerFactory"/>
 
+        <!-- Synonyms -->
+        <filter class="solr.SynonymFilterFactory"
+                synonyms="synonyms.txt"
+                format="solr"
+                ignoreCase="true"
+                expand="false"
+                />
+
         <!-- Lowercases the letters in each token. -->
         <filter class="solr.LowerCaseFilterFactory" />
 
