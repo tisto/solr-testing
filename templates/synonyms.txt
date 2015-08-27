@@ -1,2 +1,3 @@
-Academic Medicine, Acad.Med.
+Academic Medicine, Acad Med
 Foo, Bar
+Foo Bar, Fizz Buzz

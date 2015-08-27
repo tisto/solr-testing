@@ -238,6 +238,22 @@ def test_phrase_match_synonyms(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
+def test_phrase_match_phrase_synonyms(solr):
+    index = u'Foo Bar'
+    query = u'Fizz Buzz'
+    solr.add([{
+        'id': '1',
+        'phrase_match': index,
+    }])
+
+    result = solr.search(
+        'phrase_match:"{}"'.format(query)
+    )
+
+    assert 1 == result.hits
+    assert index == [x.get('phrase_match') for x in result][0]
+
+
 @pytest.mark.parametrize("index, query", [
     (
         'Revista latino-americana de enfermagem',
@@ -286,8 +302,11 @@ def test_phrase_match_synonyms(solr):
     (
         u'Smoking Cessation in Lung Cancer--Achievable and Effective.',
         u'Smoking cessation in lung cancer - Achievable and effective'
+    ),
+    (
+        u'Academic Medicine',
+        u'Acad.Med.'
     )
-
 ])
 def test_phrase_match_regressions(solr, index, query):
     solr.add([{
