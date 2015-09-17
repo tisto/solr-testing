@@ -306,6 +306,10 @@ def test_phrase_match_phrase_synonyms(solr):
     (
         u'Academic Medicine',
         u'Acad.Med.'
+    ),
+    (
+        u'Anales de Medicina Especialidades An Med Espec',
+        u'An Med Espec'
     )
 ])
 def test_phrase_match_regressions(solr, index, query):
