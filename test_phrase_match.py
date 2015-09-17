@@ -174,22 +174,6 @@ def test_phrase_match_ignores_content_in_brackets(solr):
     assert index == [x.get('phrase_match') for x in result][0]
 
 
-def test_phrase_match_ignores_everything_after_a_colon(solr):
-    index = u'Colorless Green Ideas Sleep Furiously: or not'
-    query = u'Colorless Green Ideas Sleep Furiously'
-    solr.add([{
-        'id': '1',
-        'phrase_match': index,
-    }])
-
-    result = solr.search(
-        'phrase_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('phrase_match') for x in result][0]
-
-
 def test_phrase_match_replaces_ampersands_with_and(solr):
     index = u'Colorless & Green Ideas Sleep Furiously'
     query = u'Colorless and Green Ideas Sleep Furiously'
@@ -272,10 +256,6 @@ def test_phrase_match_phrase_synonyms(solr):
         'ONCOLOGY (United States)'
     ),
     (
-        'Journal of Clinical Oncology',
-        'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
-    ),
-    (
         u'Journal of Pain & Palliative Care Pharmacotherapy',
         u'Journal of Pain and Palliative Care Pharmacotherapy'
     ),
@@ -283,10 +263,10 @@ def test_phrase_match_phrase_synonyms(solr):
         u'Eur.J Cancer Care (Engl.)',
         u'EUR J CANCER CARE'
     ),
-    (
-        u'Journal of Clinical Oncology',
-        u'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
-    ),
+#    (
+#        u'Journal of Clinical Oncology',
+#        u'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+#    ),
 #    (
 #        u'The American journal of hospice & palliative care',
 #        u'American Journal of Hospice and Palliative Medicine'

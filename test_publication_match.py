@@ -174,22 +174,6 @@ def test_publication_match_ignores_content_in_brackets(solr):
     assert index == [x.get('publication_match') for x in result][0]
 
 
-def test_publication_match_ignores_everything_after_a_colon(solr):
-    index = u'Colorless Green Ideas Sleep Furiously: or not'
-    query = u'Colorless Green Ideas Sleep Furiously'
-    solr.add([{
-        'id': '1',
-        'publication_match': index,
-    }])
-
-    result = solr.search(
-        'publication_match:"{}"'.format(query)
-    )
-
-    assert 1 == result.hits
-    assert index == [x.get('publication_match') for x in result][0]
-
-
 def test_publication_match_replaces_ampersands_with_and(solr):
     index = u'Colorless & Green Ideas Sleep Furiously'
     query = u'Colorless and Green Ideas Sleep Furiously'
