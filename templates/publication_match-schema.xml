@@ -17,12 +17,6 @@
                     replacement=""
                     />
 
-        <!-- Ignore everything after a colon. -->
-        <charFilter class="solr.PatternReplaceCharFilterFactory"
-                    pattern="\:.*"
-                    replacement=""
-                    />
-
         <!-- Replace '&' with 'and'. -->
         <charFilter class="solr.PatternReplaceCharFilterFactory"
                     pattern="\&amp;"

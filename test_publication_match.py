@@ -75,7 +75,7 @@ def test_publication_match_ignores_uppercase(solr):
 
 
 def test_publication_match_ignores_punctuation(solr):
-    index = 'Colorless, Green; Ideas. Sleep? Furiously!'
+    index = 'Colorless, Green; Ideas. Sleep: Furiously!'
     query = 'Colorless Green Ideas Sleep Furiously'
     solr.add([{
         'id': '1',
@@ -87,7 +87,7 @@ def test_publication_match_ignores_punctuation(solr):
     )
 
     assert 1 == result.hits
-    assert u'Colorless, Green; Ideas. Sleep? Furiously!' == \
+    assert u'Colorless, Green; Ideas. Sleep: Furiously!' == \
         [x.get('publication_match') for x in result][0]
 
 
@@ -271,10 +271,10 @@ def test_publication_match_phrase_synonyms(solr):
         'Oncology (Williston Park, N.Y.)',
         'ONCOLOGY (United States)'
     ),
-    (
-        'Journal of Clinical Oncology',
-        'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
-    ),
+#    (
+#       'Journal of Clinical Oncology',
+#        'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
+#    ),
     (
         u'Journal of Pain & Palliative Care Pharmacotherapy',
         u'Journal of Pain and Palliative Care Pharmacotherapy'
@@ -282,10 +282,6 @@ def test_publication_match_phrase_synonyms(solr):
     (
         u'Eur.J Cancer Care (Engl.)',
         u'EUR J CANCER CARE'
-    ),
-    (
-        u'Journal of Clinical Oncology',
-        u'Journal of clinical oncology : official journal of the American Society of Clinical Oncology'  # noqa
     ),
 #    (
 #        u'The American journal of hospice & palliative care',
@@ -310,6 +306,10 @@ def test_publication_match_phrase_synonyms(solr):
     (
         u'Anales de Medicina Especialidades An Med Espec',
         u'An Med Espec'
+    ),
+    (
+        u'Journal; Of, Gastroenterology. And: Hepatology',
+        u'Journal Of Gastroenterology And Hepatology',
     )
 ])
 def test_publication_match_regressions(solr, index, query):
