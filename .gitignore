@@ -1,6 +1,8 @@
 *.pyc
 .env/
+.cache
 __pycache__/
 downloads/
 test-solr
+bin
 
