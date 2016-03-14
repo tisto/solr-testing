@@ -10,6 +10,10 @@ Bootstrap::
 
   $ make
 
+Activate virtual Python environment::
+
+  $ source .env/bin/activate
+
 Run tests::
 
-  $ py.test
+  (.env) $ py.test
