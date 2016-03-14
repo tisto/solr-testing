@@ -188,18 +188,19 @@ def test_substring_finds_prefix_in_phrase(solr):
         [x.get('substring_match') for x in result][0]
 
 
-@pytest.mark.skip(
-    reason='Suffix match would require a 2nd idx with EdgeNGram side=back'
-)
-def test_substring_match_finds_suffix(solr):
-    solr.add([{
-        'id': '1',
-        'substring_match': 'Colorless',
-    }])
-
-    result = solr.search(
-        'substring_match:"less"'
-    )
-
-    assert 1 == result.hits
-    assert u'Colorless' == [x.get('substring_match') for x in result][0]
+# @pytest.mark.skip(
+#     reason='Suffix match would require a 2nd idx with EdgeNGram side=back'
+# )
+# def test_substring_match_finds_suffix(solr):
+#     solr.add([{
+#         'id': '1',
+#         'substring_match': 'Colorless',
+#     }])
+#
+#     result = solr.search(
+#         'substring_match:"less"'
+#     )
+#
+#     assert 1 == result.hits
+#     assert u'Colorless' == [x.get('substring_match') for x in result][0]
+#
