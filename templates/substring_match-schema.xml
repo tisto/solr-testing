@@ -26,6 +26,7 @@
         <!-- Lowercases the letters in each token. -->
         <filter class="solr.LowerCaseFilterFactory" />
 
+        <!-- Create Ngrams to find prefix substrings. -->
         <filter class="solr.EdgeNGramFilterFactory" maxGramSize="20" minGramSize="2" side="front" />
 
         <!-- Trims whitespace at either end of a token. -->
