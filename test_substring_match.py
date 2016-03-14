@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from fixtures import *
 from pysolr import SolrCoreAdmin
+import pytest
 import shutil
 
 
@@ -158,33 +159,47 @@ def test_substring_match_ignores_special_characters(solr):
     assert index == [x.get('substring_match') for x in result][0]
 
 
-def test_substring_match_ignores_content_in_brackets(solr):
-    index = u'Colorless Green Ideas Sleep Furiously (or not)'
-    query = u'Colorless Green Ideas Sleep Furiously'
+def test_substring_match_finds_prefix(solr):
     solr.add([{
         'id': '1',
-        'substring_match': index,
+        'substring_match': 'Colorless',
     }])
 
     result = solr.search(
-        'substring_match:"{}"'.format(query)
+        'substring_match:"Color"'
     )
 
     assert 1 == result.hits
-    assert index == [x.get('substring_match') for x in result][0]
+    assert u'Colorless' == [x.get('substring_match') for x in result][0]
 
 
-def test_substring_match_replaces_ampersands_with_and(solr):
-    index = u'Colorless & Green Ideas Sleep Furiously'
-    query = u'Colorless and Green Ideas Sleep Furiously'
+def test_substring_finds_prefix_in_phrase(solr):
     solr.add([{
         'id': '1',
-        'substring_match': index,
+        'substring_match': 'Colorless Green Ideas Sleep Furiously',
     }])
 
     result = solr.search(
-        'substring_match:"{}"'.format(query)
+        'substring_match:"Color"'
     )
 
     assert 1 == result.hits
-    assert index == [x.get('substring_match') for x in result][0]
+    assert u'Colorless Green Ideas Sleep Furiously' == \
+        [x.get('substring_match') for x in result][0]
+
+
+@pytest.mark.skip(
+    reason='Suffix match would require a 2nd idx with EdgeNGram side=back'
+)
+def test_substring_match_finds_suffix(solr):
+    solr.add([{
+        'id': '1',
+        'substring_match': 'Colorless',
+    }])
+
+    result = solr.search(
+        'substring_match:"less"'
+    )
+
+    assert 1 == result.hits
+    assert u'Colorless' == [x.get('substring_match') for x in result][0]

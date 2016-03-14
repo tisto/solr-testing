@@ -11,18 +11,6 @@
     <fieldType name="substring_match" class="solr.TextField">
       <analyzer>
 
-        <!-- Remove content in brackets. -->
-        <charFilter class="solr.PatternReplaceCharFilterFactory"
-                    pattern="\(.*\)"
-                    replacement=""
-                    />
-
-        <!-- Replace '&' with 'and'. -->
-        <charFilter class="solr.PatternReplaceCharFilterFactory"
-                    pattern="\&amp;"
-                    replacement="and"
-                    />
-
         <!-- Replace non-ascii characters into ascii equivalent.
              A later filter won't work since the KeywordTokenizer treats the
              entire field as a single keyword.
@@ -31,38 +19,17 @@
                     mapping="mapping-FoldToASCII.txt"
                     />
 
-        <!-- Treat the entire field as a single token. -->
+        <!-- Splits the text field into tokens, treating whitespace and
+             punctuation as delimiters. -->
         <tokenizer class="solr.StandardTokenizerFactory"/>
-
-        <!-- Synonyms -->
-        <filter class="solr.SynonymFilterFactory"
-                synonyms="synonyms.txt"
-                format="solr"
-                ignoreCase="true"
-                expand="false"
-                />
 
         <!-- Lowercases the letters in each token. -->
         <filter class="solr.LowerCaseFilterFactory" />
 
-        <!-- Stopwords -->
-        <filter class="solr.StopFilterFactory"
-                ignoreCase="true"
-                words="stopwords.txt" />
+        <filter class="solr.EdgeNGramFilterFactory" maxGramSize="20" minGramSize="2" side="front" />
 
         <!-- Trims whitespace at either end of a token. -->
         <filter class="solr.TrimFilterFactory" />
-
-        <!-- Remove all characters except lower case and whitespace.
-             Java RegExp Patterns: https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html
-        -->
-        <filter class="solr.PatternReplaceFilterFactory"
-                pattern="([^a-z\p{Space}])"
-                replacement="" replace="all" />
-
-        <!-- Replace multiple whitespace characters with just a single blank.
-        -->
-        <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="\W+" replacement=" "/>
 
       </analyzer>
     </fieldType>
