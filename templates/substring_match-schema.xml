@@ -9,7 +9,7 @@
     <fieldType name="string" class="solr.StrField" />
 
     <fieldType name="substring_match" class="solr.TextField">
-      <analyzer>
+      <analyzer type="index">
 
         <!-- Replace non-ascii characters into ascii equivalent.
              A later filter won't work since the KeywordTokenizer treats the
@@ -28,6 +28,27 @@
 
         <!-- Create Ngrams to find prefix substrings. -->
         <filter class="solr.EdgeNGramFilterFactory" maxGramSize="20" minGramSize="2" side="front" />
+
+        <!-- Trims whitespace at either end of a token. -->
+        <filter class="solr.TrimFilterFactory" />
+
+      </analyzer>
+      <analyzer type="query">
+
+        <!-- Replace non-ascii characters into ascii equivalent.
+             A later filter won't work since the KeywordTokenizer treats the
+             entire field as a single keyword.
+        -->
+        <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-FoldToASCII.txt"
+                    />
+
+        <!-- Splits the text field into tokens, treating whitespace and
+             punctuation as delimiters. -->
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+
+        <!-- Lowercases the letters in each token. -->
+        <filter class="solr.LowerCaseFilterFactory" />
 
         <!-- Trims whitespace at either end of a token. -->
         <filter class="solr.TrimFilterFactory" />

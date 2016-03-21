@@ -188,6 +188,29 @@ def test_substring_finds_prefix_in_phrase(solr):
         [x.get('substring_match') for x in result][0]
 
 
+def test_substring_match_does_not_find_prefix_in_search(solr):
+    """When N-grams are created during search. The result contains elements for
+       all possible substrings of the search query. This is not what the user
+       would expect.
+    """
+    solr.add([{
+        'id': '1',
+        'substring_match': 'Colorless Green Ideas Sleep Furiously',
+    }])
+    solr.add([{
+        'id': '2',
+        'substring_match': 'Color',
+    }])
+
+    result = solr.search(
+        'substring_match:"Colorless"'
+    )
+
+    assert 1 == result.hits
+    assert u'Colorless Green Ideas Sleep Furiously' == \
+        [x.get('substring_match') for x in result][0]
+
+
 # @pytest.mark.skip(
 #     reason='Suffix match would require a 2nd idx with EdgeNGram side=back'
 # )
